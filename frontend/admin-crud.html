@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+</head>
+<style>
+  .container{
+    margin: 1%;
+  }
+  table{
+    width: 100%;
+  }
+  .table{
+    display: flex;
+    justify-content: center;
+  }
+ table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th{
+  padding: 30px;
+}
+td{
+text-align: center;
+width: 250px;
+}
+
+.btn{
+    padding: 2%;
+    margin: 3%;
+    border: 1px solid blue;
+    border-radius: 4px;
+    color: blue;
+}
+.width{
+  width: 40%;
+}
+.null{
+  background-color: transparent;
+  border: 1px solid blue;
+  color: blue;
+}
+.fill{
+  background-color: blue;
+  color: white;
+}
+tr{
+  display: table-row;
+}
+.btn-back{
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+.back-btn{
+    padding: 1%;
+    width: 8vw;
+    background-color: transparent;
+    border: 1px solid blue;
+    border-radius: 4px;
+    color: blue;
+    display: flex;
+    justify-content: center;
+}
+</style>
+
+<body>
+ <div class="btn-back">
+  <button class="back-btn" id="back"> < back </button>
+ </div> 
+<table border="1" id="myTable">
+  <thead>
+      <tr>
+          <th>UserId</th>
+          <th>Name</th>
+          <th>Photo</th>
+          <th>Action</th>
+      </tr>
+  </thead>
+  <tbody>
+    <!-- Dunamically HTML will be created -->
+      <!-- Existing rows go here -->
+  </tbody>
+</table>
+
+</body>
+
+<script>
+document.getElementById('back').addEventListener('click',()=>{
+  window.location.href="admin-op.html";
+})
+var buttonId;//Decalring Gloable variable to get id of particular buttons
+async function getAllUsers(){
+    try {
+        const response =await fetch('/Admin/Allusers');
+        const data =await  response.json();
+       if(data){
+            var Users=data.user
+            console.log(Users)
+       }else{
+        alert("Internal Error");
+       }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+    let currentIndex = 1;
+    
+        // Clear existing rows
+        const tableBody=document.querySelector('tbody');
+        tableBody.innerHTML = '';
+        // Iterate over the response data
+        Users.forEach((data) => {
+            // Create a new table row (tr)
+            const row = document.createElement('tr');
+
+            // Create four table cells (td) for index, name, image, and action
+            const indexCell = document.createElement('td');
+            indexCell.textContent = data.UserId;
+
+            const nameCell = document.createElement('td');
+            nameCell.textContent = data.Name;
+
+            const imageCell = document.createElement('td');
+            const image = document.createElement('img');
+            image.src = data.Photo;
+            image.alt = 'profile';
+            image.width = 60;
+            image.height = 60;
+            imageCell.appendChild(image);
+            const actionCell = document.createElement('td');
+            if (data.Approval==="Accepted by Admin") {
+              
+            } else {
+              
+              const doneButton = document.createElement('button');
+              doneButton.className = 'btn width fill';
+              doneButton.textContent = 'Done';   
+              doneButton.id=data.UserId;           
+              actionCell.appendChild(doneButton);
+              doneButton.addEventListener('click',(event)=>{
+               buttonId = event.currentTarget.id;
+
+// Log or do something with the button ID
+console.log('Button ID:', buttonId);
+              console.log("'Button ID:', buttonId")
+              approveUser()
+              getAllUsers()
+            })
+            }
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btn width null';
+            deleteButton.id=data.UserId;
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click',(event)=>{
+               buttonId = event.currentTarget.id;
+
+// Log or do something with the button ID
+console.log('Button ID:', buttonId);
+              console.log("'Button ID:', buttonId")
+              deleteUser()
+            })
+            actionCell.appendChild(deleteButton);
+
+            // Append the cells to the row
+            row.appendChild(indexCell);
+            row.appendChild(nameCell);
+            row.appendChild(imageCell);
+            row.appendChild(actionCell);
+
+            // Append the row to the table body
+            tableBody.appendChild(row);
+        });
+          
+    }
+
+
+getAllUsers();
+
+async function deleteUser() {
+
+ 
+         try {
+        const response = await fetch(`/Admin-delete/${buttonId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert("User Delete SuccessFully!");
+          getAllUsers();
+          console.log(`User deleted successfully: ${JSON.stringify(result.deletedUser)}`);
+        } else {
+          alert( `Error: ${result.message}`);
+        }
+      } catch (error) {
+        console.error('Error:', error.message);
+     }
+    }
+ 
+
+  //     async function approval(){
+  // try{
+  // const response=await fetch(`/Admin-approval/${USER_ID}`,{
+  //               method: 'POST',
+  //               headers: {
+  //                   'Content-Type':'application/json',
+  //               },
+  //               body: JSON.stringify({
+  //                   Approval:"Accepted by Admin",
+  //               }),
+  //           });
+  //           const data = await response.json();
+  //               console.log(data)
+  //               if (data.error) {
+  //                   alert(data.error); // Display an alert for errors
+  //               } else if (data.success) {
+  //                   alert(data.success); // Display a success message
+    
+                  
+  //                   if (data.user) {
+                     
+  //                       console.log('User Data:', data.user);
+  //                   }
+  //                   getAllUsers();
+                  
+  //               }
+        
+  //       } catch (error) {
+  //           console.error('Error:', error);
+  //           alert('An error occurred. Please try again.');
+  //       }
+  //     }
+
+
+
+async function approveUser(){
+    try {
+          const userId=buttonId;
+            
+            const response = await fetch(`/update-Approval/${userId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ 
+                Approval:"Accepted by Admin",
+            }),
+            });
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const data =await  response.json();
+            console.log(data);
+            if (data.error) {
+                  alert(data.error); // Display an alert for errors
+              } else if (data.success) {
+                  alert(data.success); // Display a success message
+                  
+                  // Assuming the backend sends user data upon successful login
+                  if (data.user) {
+                      // localStorage.setItem("id",data.user)
+                      // Display the user data or update your UI as needed
+                      console.log('User Data:', data.user);
+                  }
+          }
+    
+          }
+          catch(error){
+            console.log(error);
+          }
+}
+
+
+function checkWindowSize() {
+        if (window.innerWidth < 600) {  // Adjust the size threshold as needed
+            window.location.href = 'admin-crud1.html';  // Replace with the desired HTML file
+        }
+    }
+
+    // Call the function on page load
+    window.onload = checkWindowSize;
+
+    // Attach the function to the window resize event
+    window.onresize = checkWindowSize;
+</script>
+</body>
+</html>

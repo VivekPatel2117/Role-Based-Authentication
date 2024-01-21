@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Operations</title>
+    <link rel="stylesheet" href="./css/admin-op.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Poppins&display=swap"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">
+        <div class="content">
+          <h1>Create User</h1>
+          <form id="form1">
+            <label for="UserID">User ID</label>
+            <input type="text" name="UserID" id="userId" required />
+            <br />
+            <label for="password">Password</label>
+            <input type="password" name="Password" id="password" required />
+            <br />
+
+            <button class="Submit-btn" onclick="loginUser()">Submit</button>
+          </form>
+        </div>
+      </div>
+      <hr />
+      <div class="right">
+        <div class="content">
+          <h1>View User</h1>
+          <form id="form">
+            <!-- Dyanamically below Html will be created upon the response -->
+            <!-- <div class="input">
+              <div class="badge">1</div>
+              <input type="text" id="ID1" name="UserID" readonly />
+              <input type="text" id="Pass1" name="Password" readonly />
+            </div> -->
+
+           
+          </form>
+          <button onclick="view()" class="view-btn">view</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      var UserID1 = document.getElementById("ID1");
+      var Password1 = document.getElementById("Pass1");
+
+      document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+      });
+      document.getElementById("form1").addEventListener("submit", (event) => {
+        event.preventDefault();
+      });
+function view() {
+        window.location.href = "admin-crud.html";
+      }
+      // Assuming you have a function to fetch and display user data
+async function getAllUsers() {
+        try {
+          const response = await fetch("/Admin/Allusers");
+          const data = await response.json();
+          if (data) {
+            var Users = data.user;
+            console.log(Users);
+          } else {
+            alert("Internal Error");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+        var index = 1;
+        Users.forEach((data) => {
+          //Using loop to create html 
+          if (index <= 2) {
+            const newDiv = document.createElement("div");
+            document.getElementById('form').appendChild(newDiv)
+            console.log(newDiv)
+            newDiv.classList.add("input");
+            const childDiv = document.createElement("div");
+            childDiv.innerHTML = index++;
+            childDiv.classList.add("badge");
+
+            newDiv.appendChild(childDiv);
+
+            var input1 = document.createElement("input");
+            input1.type = "text";
+            input1.id = "ID1";
+            input1.readOnly = true;
+
+            // Create the second input element
+            var input2 = document.createElement("input");
+            input2.type = "text";
+            input2.id = "Pass1";
+            input2.readOnly = true;
+
+            newDiv.appendChild(input1);
+            newDiv.appendChild(input2);
+            input1.value = data.UserId;
+            input2.value = data.Password;
+          }
+        });
+      }
+      getAllUsers();//Calling to get all the users data previous
+//using [previous api for storing user]
+async function loginUser() {
+        try {
+          const userId = document.getElementById("userId").value;
+          const password = document.getElementById("password").value;
+
+          const response = await fetch("/Admin-USER", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              UserId: userId,
+              Password: password,
+              Name: "-",
+              Approval: "Not Accepted by Admin",
+            }),
+          });
+
+          const data = await response.json();
+          console.log(data);
+          if (data.error) {
+            alert(data.error); // Display an alert for errors
+          } else if (data.success) {
+            alert(data.success); // Display a success message
+
+            if (data.user) {
+              console.log("User Data:", data.user);
+            }
+            getAllUsers();
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred. Please try again.");
+        }
+        getAllUsers();
+      }
+    </script>
+  </body>
+</html>

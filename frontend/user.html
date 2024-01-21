@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/user-profile.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"
+      integrity="sha512-9KkIqdfN7ipEW6B6k+Aq20PV31bjODg4AA52W+tYtAE0jE0kMx49bjJ3FgvS56wzmyfMUHbQ4Km2b7l9+Y/+Eg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.css"
+      integrity="sha512-bs9fAcCAeaDfA4A+NiShWR886eClUcBtqhipoY5DM60Y1V3BbVQlabthUBal5bq8Z8nnxxiyb1wfGX2n76N1Mw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title>Styled File Input</title>
+    <style>
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.326
+        ); /* Adjust the color and opacity as needed */
+        display: none;
+        pointer-events: none;
+        backdrop-filter: blur(1px);
+      }
+      .bg-color {
+        background-color: #f2f2f2;
+      }
+      .red{
+        color: red;
+      }
+      .green{
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">
+        <div class="overlay"></div>
+        <div class="btn-container">
+          <button id="view" class="btn">View</button>
+        </div>
+        <div class="form-container">
+          <form id="user-profile">
+            <label for="Name">Name</label>
+            <br />
+            <input type="text" name="name" id="name" required />
+            <br />
+            <label for="Photo">Photo</label>
+            <br />
+            <div class="file-input-container bg-color" id="output">
+              <img
+                class="img hidden"
+                src="./assets/Sana_Singh.jpeg"
+                id="previewImage"
+                alt="profile"
+              />
+              <input type="file" class="file-input" id="fileInput" />
+              <img
+                src="./assets/Sana_Singh.jpeg"
+                class="img hidden"
+                id="CroppedImage"
+                alt="croppedImage"
+              />
+            </div>
+            <input
+              type="submit"
+              class="submit"
+              onclick="updatedb()"
+              id="cropImageBtn"
+              value="upload"
+            />
+          </form>
+        </div>
+      </div>
+      <div id="right" class="right hidden">
+        <div class="back-container">
+          <button id="back-btn" class="back-btn">back</button>
+        </div>
+
+        <div class="form-container" style="margin-top: 20%">
+          <form>
+            <label for="Name">Name</label>
+            <br />
+            <input type="text" name="name" id="read-name" readonly />
+            <br />
+            <label for="Photo">Photo</label>
+            <br />
+            <div class="file-input-container bg-color">
+              <img class="img hidden" id="CroppedImage-right" alt="profile" />
+            </div>
+            <p id="approval" class=" approval red"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+       var imgUrl;//Declaring Global Variable for img public url
+      const form = document.getElementById("user-profile");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+      });
+      var previewImage = document.getElementById("previemImage");
+      var output = document.getElementById("output");
+
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", function (event) {
+          const input = event.target;
+          const file = input.files[0];
+
+          if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+              const previewImage = document.getElementById("previewImage");
+              previewImage.src = e.target.result;
+
+              // Initialize Cropper
+              const cropper = new Cropper(previewImage, {
+                aspectRatio: NaN,
+                zoomOnWheel: false,
+              });
+
+              // Optional: Attach the cropper instance to the input element
+              input.cropper = cropper;
+            };
+
+            reader.readAsDataURL(file);
+            previewImage.classList.remove("hidden");
+          }
+        });
+      
+      var name = document.getElementById("name");
+      var readName = document.getElementById("read-name");
+
+      document.getElementById("view").addEventListener("click", function () {
+        const cropper = document.getElementById("fileInput").cropper;
+        if (cropper) {
+          // Open a modal or perform any action using the cropper instance
+          console.log("View button clicked");
+        } else {
+          alert("Please select an image first.");
+          return;
+        }
+      });
+      var rightDiv = document.getElementById("right");
+      var viewButton = document.getElementById("view");
+      var backButton = document.getElementById("back-btn");
+      var overlay = document.querySelector(".overlay");
+      var output = document.getElementById("output");
+      var left = document.querySelector(".left");
+
+      viewButton.addEventListener("click", function () {
+        overlay.style.display =
+          overlay.style.display === "block" ? "none" : "block";
+        rightDiv.classList.remove("hidden");
+        checkMediaQuery();
+        output.classList.remove("bg-color");
+      });
+
+      backButton.addEventListener("click", function () {
+        overlay.style.display =
+          overlay.style.display === "none" ? "block" : "none";
+        rightDiv.classList.add("hidden");
+        output.classList.add("bg-color");
+        checkMediaQuery();
+        // output.classList.add('file-input-container');
+      });
+//To display USers Saved Data
+async function User() {
+    try {
+        const response = await fetch(`/user/${localStorage.getItem('id')}`);
+        const data = await response.json();
+       if(data){
+          console.log(data)
+            var User=data.user
+            console.log(User)
+            document.getElementById('read-name').value=User.Name;
+            document.getElementById('CroppedImage-right').src=User.Photo;
+            document.getElementById('CroppedImage-right').classList.remove('hidden');
+          if (User.Approval==="Accepted by Admin") {
+            document.getElementById('approval').innerHTML=User.Approval;
+            document.getElementById('approval').classList.remove('red');
+            document.getElementById('approval').classList.add('green');
+          } else {
+            document.getElementById('approval').innerHTML=User.Approval; 
+          }
+           
+       }else{
+        alert("Internal Error");
+       }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+  }
+//Calling User for Displaying data
+User();
+
+//To have Efficient Responsiveness of screens
+function checkMediaQuery() {
+        var contentElement = document.getElementById("container");
+        var viewportWidth =
+          window.innerWidth || document.documentElement.clientWidth;
+
+        if (viewportWidth <= 768) {
+          if (rightDiv.classList.contains("hidden")) {
+            left.style.display = null;
+          } else {
+            left.style.display = "none";
+            rightDiv.classList.remove("right");
+          }
+        } else {
+          left.style.display = null;
+        }
+      }
+checkMediaQuery();
+window.addEventListener("resize", checkMediaQuery);
+//To crop Image
+document
+        .getElementById("cropImageBtn")
+        .addEventListener("click", function () {
+          const cropper = document.querySelector(".img").cropper;
+          document.getElementById('read-name').value=document.getElementById('name').value
+          if (cropper) {
+            // Get the cropped canvas
+            var croppedImage = cropper
+              .getCroppedCanvas()
+              .toDataURL("image/jpeg");
+            // Set the src attribute of the original img tag with the data URL of the cropped canvas
+            document.getElementById("CroppedImage").classList.remove("hidden");
+            document.getElementById("CroppedImage").src = croppedImage;
+            document
+              .getElementById("CroppedImage-right")
+              .classList.remove("hidden");
+            document.getElementById("CroppedImage-right").src = croppedImage;
+              const data = new FormData()
+              //Uploading Images to a free cloud media storage Converts every Media link in a public url
+              data.append("file", croppedImage)
+              data.append("upload_preset", "Social")
+              data.append("cloud_name", "Pillai-ig")//Using Previous Project repo
+              fetch("https://api.cloudinary.com/v1_1/Pillai-ig/image/upload", {
+                method: "post",
+                body: data
+              }).then(res => res.json())
+                .then(data => {
+                  imgUrl=data.url
+                  console.log(imgUrl)
+                }
+              )
+              .catch(err => console.log(err))
+              console.log(data)
+              const name=document.getElementById('name');
+
+          }
+    else {
+            alert("Please select an image first.");
+          }
+        });
+    
+
+async function updatedb(){
+  const name=document.getElementById('name');
+  if (imgUrl && name.value!="" ) {
+  
+    const photoValue=imgUrl;
+    try {
+          const userId=localStorage.getItem("id");
+          if (userId) {
+            
+            const response = await fetch(`/update-photo/${userId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ 
+                Name:name.value,
+                Photo: photoValue }),
+            });
+             console.log(name.value);
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const data =await  response.json();
+            console.log(data);
+            if (data.error) {
+                  alert(data.error); // Display an alert for errors
+              } else if (data.success) {
+                  alert(data.success); // Display a success message
+                  
+                  // Assuming the backend sends user data upon successful login
+                  if (data.user) {
+                      console.log('User Data:', data.user);
+                  }
+          }
+        
+      
+         
+            }
+            else{
+              alert("Internal Error");
+            }
+          }
+          catch(error){
+            console.log(error);
+          }
+        }
+        else{
+          alert("Please Enter Name and select Image")
+        }
+      
+}
+
+
+   </script>
+  </body>
+</html>

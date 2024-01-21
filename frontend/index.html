@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Login</title>
+    <link rel="stylesheet" href="./css/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Poppins&display=swap"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">
+        <div class="image">
+          <img
+            src="./assets/background.png"
+            alt="layer"
+            width="600px"
+            height="600px"
+          />
+        </div>
+        <div class="logo">
+          <h1>LOGO</h1>
+        </div>
+      </div>
+      <div class="right">
+        <div class="content">
+          <h1>User Login</h1>
+          <form id="UserLoginForm">
+            <input
+              type="text"
+              name="UserId"
+              id="userId"
+              placeholder="User ID"
+              required
+            />
+            <br />
+            <input
+              type="password"
+              name="Password"
+              id="password"
+              placeholder="Password"
+              required
+            />
+            <br />
+            <button class="login-btn" onclick="loginUser(event)" type="submit">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    async function loginUser(event) {
+      event.preventDefault();
+
+      try {
+        const userId = document.getElementById("userId").value;
+        const password = document.getElementById("password").value;
+
+        const response = await fetch("/USER", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            UserId: userId,
+            Password: password,
+          }),
+        });
+
+        const data = await response.json();
+        console.log(data);
+        if (data.error) {
+          alert(data.error); // Display an alert for errors
+        } else if (data.success) {
+          alert(data.success); // Display a success message
+
+          // Assuming the backend sends user data upon successful login
+          if (data.user) {
+            localStorage.setItem("id", data.user);
+            // Display the user data or update your UI as needed
+            console.log("User Data:", data.user);
+          }
+
+          window.location.href = "/user.html"; // Redirect to user.html
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
+      }
+    }
+  </script>
+</html>

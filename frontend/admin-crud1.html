@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body{
+        background-color: #d3d3d342;
+        color: #0000009e;
+    }
+    .container{
+        background-color: white;
+    height: max-content;
+    padding-bottom: 2%;
+}
+    .first-row{
+     background-color: #87e2ff75;
+    display: flex;
+    text-align: center;
+    /* width: 100%; */
+    justify-content: center;
+    justify-items: center;
+    padding-left: 35%;
+    padding-right: 35%;
+    border: 1px solid black;
+    
+}
+span{
+    display: flex;
+    align-items: center;
+}
+img{
+    width: 100px;
+    height: 100px;
+}
+.second-row{
+    display: flex;
+    justify-content: space-between;
+}
+.left{
+    padding-top: 1%;
+    display: flex;
+}
+.right{
+    text-align: center;
+    padding-right: 10%;
+}
+.btn{
+    display: flex;
+    justify-content: center;
+}
+
+.btn-back{
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+.back-btn{
+    padding: 1%;
+    width: 8vw;
+    background-color: transparent;
+    border: 1px solid blue;
+    border-radius: 4px;
+    color: blue;
+    display: flex;
+    justify-content: center;
+}
+.DoneBtn{
+    border: 1px solid blue;
+                        background-color: blue;
+                        padding: 7%;
+                        color: white;
+                        border-radius: 3px;
+                        margin-right: 5%;
+}
+.DeleteBtn{
+    background-color: transparent;
+                        border: 1px solid blue;
+                        border-radius: 3px;
+                        padding: 7%;
+                        margin-left: 5%;
+                        color: blue;
+                        margin-right: 10%;}
+
+@media screen and (max-width:600px) {
+    hr{
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+    .back-btn{
+    padding: 2%;
+    width: 18vw;
+    background-color: transparent;
+    border: 1px solid blue;
+    border-radius: 4px;
+    color: blue;
+    display: flex;
+    justify-content: center;
+}
+    }
+
+
+</style>
+<body>
+    <div class="container">
+        <div class="btn-back">
+            <button class="back-btn" id="back"> < back </button>
+           </div>
+        <div class="data">
+            <div class="first-row">
+                <!-- this will be dyanmically created -->
+                <!-- <p id="First-p">UserID:</p>
+                <span id="UserId">1234</span>
+                <hr id="hr">
+                <p id="Second-p" >Name:</p>
+                <span id="Name">Vivek</span> -->
+            </div>
+            <div class="second-row">
+                <!-- This will also be dyanmically created -->
+                <!-- <div class="left display">
+                    <p>Photo:</p>
+                    <span style="padding-left: 5%;"><img src="./assets/Sana_Singh.jpeg" alt=""></span>
+                </div>
+                <div class="right">
+                    <p>action</p>
+                    <div class="btn">
+                        <button id="Done">Done</button>
+                        <button id="Delete">Delete</button>
+                    </div> -->
+                </div>
+            </div>
+        </div> 
+    </div>
+    <script>
+ var buttonId;//Decalring Global Variable to get ids of particular buttons
+
+async function getAllUsers(){
+    try {
+        const response =await fetch('/Admin/Allusers');
+        const data =await  response.json();
+       if(data){
+            var Users=data.user
+            console.log(Users)
+       }else{
+        alert("Internal Error");
+       }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+    let currentIndex = 1;
+    
+        // Clear existing rows
+        const Conatiner=document.querySelector('.data');
+        Conatiner.innerHTML = '';
+        // Iterate over the response data
+        Users.forEach((data) => {
+            // Creating dyanmic html
+            const FirstRow=document.createElement('div')
+            FirstRow.classList.add('first-row');
+            Conatiner.appendChild(FirstRow)
+            const First_p=document.createElement('p');
+            const spanID=document.createElement('span');
+            const hr=document.createElement('hr');
+            First_p.id='First-p';
+            First_p.textContent="UserID:"
+            spanID.id="UserId";
+            spanID.textContent=data.UserId;
+            FirstRow.appendChild(First_p);
+            FirstRow.appendChild(spanID);
+            FirstRow.appendChild(hr);
+            const second_p=document.createElement('p');
+            second_p.id="second-p";
+            second_p.textContent="Name:";
+            const spanName=document.createElement('span');
+            spanName.id="Name";
+            spanName.textContent=data.Name;
+            FirstRow.appendChild(second_p);
+            FirstRow.appendChild(spanName);
+
+            const SecondRow=document.createElement('div');
+            SecondRow.classList.add('second-row');
+            Conatiner.appendChild(SecondRow);
+            
+            const divLeft=document.createElement('div');
+            divLeft.classList.add('left');
+            divLeft.classList.add('display');
+            SecondRow.appendChild(divLeft);
+            const Photo_p=document.createElement('p');
+            Photo_p.textContent="Photo:";
+            divLeft.appendChild(Photo_p);
+            const span_photo=document.createElement('span');
+            span_photo.style.paddingLeft='5%';
+            divLeft.appendChild(span_photo);
+            const img=document.createElement('img');
+            img.src=data.Photo;
+            span_photo.appendChild(img);
+
+            const divRight=document.createElement('div');
+            divRight.classList.add('right');
+            SecondRow.appendChild(divRight);
+            const action=document.createElement('p');
+            action.textContent="action";
+            divRight.appendChild(action);
+            const btn=document.createElement('div');
+            btn.classList.add('btn');
+            divRight.appendChild(btn);
+            if (data.Approval==="Accepted by Admin") {
+                
+            } else {
+                const doneButton=document.createElement('button');
+                doneButton.id=data.UserId;
+                doneButton.classList.add('DoneBtn');
+                doneButton.textContent="Done";
+                btn.appendChild(doneButton);
+                doneButton.addEventListener('click',(event)=>{
+               buttonId = event.currentTarget.id;
+
+// Log or do something with the button ID
+console.log('Button ID:', buttonId);
+              console.log("'Button ID:', buttonId")
+              approveUser()
+            })
+
+            }
+            const deleteButton=document.createElement('button');
+            deleteButton.id=data.UserId;
+            deleteButton.classList.add('DeleteBtn');
+            deleteButton.textContent="Delete";
+            btn.appendChild(deleteButton);
+
+            deleteButton.addEventListener('click',(event)=>{
+               buttonId = event.currentTarget.id;
+
+// Log or do something with the button ID
+console.log('Button ID:', buttonId);
+              console.log("'Button ID:', buttonId")
+              deleteUser()
+            })
+
+
+
+
+
+
+
+
+
+            // const row = document.createElement('tr');
+
+            // // Create four table cells (td) for index, name, image, and action
+            // const indexCell = document.createElement('td');
+            // indexCell.textContent = data.UserId;
+
+            // const nameCell = document.createElement('td');
+            // nameCell.textContent = data.Name;
+
+            // const imageCell = document.createElement('td');
+            // const image = document.createElement('img');
+            // image.src = data.Photo;
+            // image.alt = 'profile';
+            // image.width = 60;
+            // image.height = 60;
+            // imageCell.appendChild(image);
+            // const actionCell = document.createElement('td');
+            // if (data.Approval==="Accepted by Admin") {
+              
+            // } else {
+              
+//               const doneButton = document.createElement('button');
+//               doneButton.className = 'btn width fill';
+//               doneButton.textContent = 'Done';   
+//               doneButton.id=data.UserId;           
+//               actionCell.appendChild(doneButton);
+            
+
+//             const deleteButton = document.createElement('button');
+//             deleteButton.className = 'btn width null';
+//             deleteButton.id=data.UserId;
+//             deleteButton.textContent = 'Delete';
+//             deleteButton.addEventListener('click',(event)=>{
+//                buttonId = event.currentTarget.id;
+
+// // Log or do something with the button ID
+// console.log('Button ID:', buttonId);
+//               console.log("'Button ID:', buttonId")
+//               deleteUser()
+//             })
+//             actionCell.appendChild(deleteButton);
+
+//             // Append the cells to the row
+//             row.appendChild(indexCell);
+//             row.appendChild(nameCell);
+//             row.appendChild(imageCell);
+//             row.appendChild(actionCell);
+
+//             // Append the row to the table body
+//             tableBody.appendChild(row);
+        });
+          
+    }
+
+    getAllUsers();
+
+
+async function approveUser(){
+    try {
+          const userId=buttonId;
+            
+            const response = await fetch(`/update-Approval/${userId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ 
+                Approval:"Accepted by Admin",
+            }),
+            });
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const data =await  response.json();
+            console.log(data);
+            if (data.error) {
+                  alert(data.error); // Display an alert for errors
+              } else if (data.success) {
+                  alert(data.success); // Display a success message
+                  
+                  // Assuming the backend sends user data upon successful login
+                  if (data.user) {
+                    
+                      console.log('User Data:', data.user);
+                  }
+          }
+    
+          }
+          catch(error){
+            console.log(error);
+          }
+}
+
+
+ async function deleteUser() {
+
+ 
+try {
+const response = await fetch(`/Admin-delete/${buttonId}`, {
+ method: 'DELETE',
+ headers: {
+   'Content-Type': 'application/json',
+ },
+});
+
+const result = await response.json();
+
+if (response.ok) {
+ alert("User Delete SuccessFully!");
+ getAllUsers();
+ console.log(`User deleted successfully: ${JSON.stringify(result.deletedUser)}`);
+} else {
+ alert( `Error: ${result.message}`);
+}
+} catch (error) {
+console.error('Error:', error.message);
+}
+}
+
+// async function approval(){
+//   try{
+//   const response=await fetch(`/Admin-approval/${USER_ID}`,{
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type':'application/json',
+//                 },
+//                 body: JSON.stringify({
+//                     Approval:"Accepted by Admin",
+//                 }),
+//             });
+//             const data = await response.json();
+//                 console.log(data)
+//                 if (data.error) {
+//                     alert(data.error); // Display an alert for errors
+//                 } else if (data.success) {
+//                     alert(data.success); // Display a success message
+    
+                  
+//                     if (data.user) {
+                     
+//                         console.log('User Data:', data.user);
+//                     }
+//                     getAllUsers();
+                  
+//                 }
+        
+//         } catch (error) {
+//             console.error('Error:', error);
+//             alert('An error occurred. Please try again.');
+//         }
+//       }
+ 
+ 
+ 
+ 
+document.getElementById('back').addEventListener('click',()=>{
+  window.location.href="admin-op.html";
+})
+//To keep responsiveness intact
+function checkWindowSize() {
+        if (window.innerWidth > 600) {  // Adjust the size threshold as needed
+            window.location.href = 'admin-crud.html';  // Replace with the desired HTML file
+        }
+    }
+
+    // Call the function on page load
+    window.onload = checkWindowSize;
+
+    // Attach the function to the window resize event
+    window.onresize = checkWindowSize;
+    </script>
+</body>
+</html>

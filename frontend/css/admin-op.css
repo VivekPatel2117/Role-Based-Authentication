@@ -1,0 +1,98 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+}
+
+.left,
+.right {
+    flex: 1;
+    margin-top: 5%;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.591);
+}
+.left h1{
+    margin-bottom: 10%;
+}
+.left  form input{
+    width: 70%;
+    padding: 2%;
+    border: 1px rgba(128, 128, 128, 0.245) solid;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+.right form .input{
+    padding: 5% 5% 3% 5%;
+    margin: 2% 10% 2% 10%;
+    border-radius: 10px;
+    background-color: rgb(182 216 255 / 25%);
+}
+.right form .input .badge{
+        border-radius: 50%;
+        background: blue;
+        width: 7%;
+        margin-top: -5%;
+        margin-left: 98%;
+        padding-left: 0px;
+        color: white;
+}
+.right form input{
+    width: 90%;
+    padding: 3%;
+    border: 1px rgba(128, 128, 128, 0.245) solid;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.left form label{
+    display: flex;
+    margin-left: 15%;
+}
+.Submit-btn{
+    background-color: blue;
+    padding: 2%;
+    width: 70%;
+    border: 1px rgba(128, 128, 128, 0.245) solid;
+    border-radius: 4px;
+    color: white;
+    margin-bottom: 15%;
+}
+.content{
+    margin-top: 10%;
+}
+.right .view-btn{
+        background-color: blue;
+        padding: 2%;
+        border: 1px rgba(128, 128, 128, 0.245) solid;
+        border-radius: 4px;
+        color: white;
+        width: 15%;
+        margin-left: 65%;
+    }
+
+
+/* Add media queries for responsiveness if necessary */
+@media (max-width: 600px) {
+    hr{
+        margin-top: 20%;
+    }
+    .container {
+        flex-direction: column;
+    }
+
+    .left,
+    .right {
+        flex: auto;
+        height: 50vh; /* Half height in a single-column layout */
+    }
+}

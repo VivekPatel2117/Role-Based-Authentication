@@ -1,0 +1,94 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    display: flex;
+}
+
+.left {
+    flex: 2;
+    background: #122155 no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.image {
+    margin-top: 2%;
+    display: flex;
+    justify-content: center;
+}
+
+.logo {
+  
+    background-color: white;
+    padding: 5% 10% 5% 10%;
+    border: 1px rgba(128, 128, 128, 0.245) solid;
+    position: absolute;
+}
+.logo > h1{
+    color: blue;
+    font-size: larger;
+}
+
+.right {
+    flex: 1;
+    text-align: center;
+    width: 100%;
+}
+
+.right .content {
+    margin-top: 25%;
+}
+
+.right .content > form {
+    padding-top: 15%;
+    box-sizing: border-box;
+    display: grid;
+    align-content: center;
+    margin-left: 10%;
+    margin-right: 10%;
+    align-items: center;
+}
+
+form > input {
+    padding: 5%;
+    border: 1px rgba(128, 128, 128, 0.245) solid;
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+ .login-btn {
+    background-color: blue;
+    padding: 5%;
+    border: 1px rgba(128, 128, 128, 0.245) solid;
+    border-radius: 10px;
+    color: white;
+}
+
+.content > h1 {
+    color: rgba(0, 0, 0, 0.599);
+}
+
+/* Media Query for Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .left, .right {
+        flex: auto;
+        width: 100%;
+    }
+
+    .image img {
+        max-width: 100%;
+        height: auto;
+    }
+}

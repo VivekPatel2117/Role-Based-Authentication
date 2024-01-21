@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="./css/admin.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins&display=swap">
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="image">
+                <img src="./assets/background.png" alt="layer" width="600px" height="600px">
+            </div>
+            <div class="logo">
+                <h1>
+                    LOGO
+                </h1>
+            </div>
+        </div>
+        <div class="right">
+            <div class="content">
+                <h1>Admin Login</h1>
+                <form id="AdminForm">
+                    <input type="number" id="UserID"  placeholder="User ID" required />
+                    <br>
+                    <input type="password" name="password" id="password" placeholder="Password" required />
+                    <br>
+
+                  <button class="login-btn" onclick="verify()" >Login</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</body>
+<script>
+  const form = document.getElementById("AdminForm");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+  });
+//Admin Login Credentails
+  const credentials = {
+    AdminId: "2113",
+    Password: "2113"
+  }
+
+  const verify = () => {
+    var UserID = document.getElementById('UserID').value;
+    var Password = document.getElementById('password').value;
+
+    if (credentials.AdminId === UserID && credentials.Password === Password) {
+      window.location.href = "admin-op.html";
+    } else {
+      alert("Invalid Credentials");
+    }
+  }
+</script>
+</html>
